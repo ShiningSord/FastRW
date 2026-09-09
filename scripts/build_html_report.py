@@ -263,6 +263,38 @@ def build_table_weakprior() -> str:
 # tab:time -- wallclock breakdown
 # ---------------------------------------------------------------------------
 def build_table_time() -> str:
+    all_data = load_json(OUT / "tcad_table_time" / "all_cases_wallclock.json")
+    if all_data is not None:
+        rows = [
+            '<tr><th>Case</th><th>&epsilon; (K)</th><th>PIRW (s/query)</th>'
+            '<th>FastRW (s/query; speedup)</th>'
+            '<th>FasterRW (s/query; speedup)</th></tr>'
+        ]
+        for cell in all_data.get("cells", []):
+            stages = cell.get("stages_per_query_s", {})
+            speedup = cell.get("wallclock_speedup_vs_PIRW_lower_bound", {})
+            pirw_s = stages.get("PIRW", {}).get("Total", math.nan)
+            fast_s = stages.get("FastRW", {}).get("Total_upper_bound", math.nan)
+            faster_s = stages.get("FasterRW", {}).get("Total_upper_bound", math.nan)
+            rows.append(
+                f'<tr><td>{cell.get("case", "").replace("case", "Case ")}</td>'
+                f'<td>{cell.get("eps_target_K", math.nan):.1f}</td>'
+                f'<td>{pirw_s:.3f}</td>'
+                f'<td>&le; {fast_s:.3f}; &ge; {speedup.get("FastRW", math.nan):.3f}&times;</td>'
+                f'<td>&le; {faster_s:.3f}; &ge; {speedup.get("FasterRW", math.nan):.3f}&times;</td></tr>'
+            )
+        return (
+            '<h2>Table tab:time &mdash; Windows wall-clock results for all Table 1 cells</h2>'
+            f'<p class="note">Device: {all_data.get("device", "unknown")}. '
+            'The Nmax CUDA runtimes are measured on Windows and scaled linearly to each '
+            'paper-selected N, following the original report methodology. Post-processing '
+            'is the median of three measured runs. The FastRW/FasterRW totals include the '
+            'conservative FEM prior bound (&lt;1 s per 16-query batch), so their times are '
+            'upper bounds and the corresponding wall-clock speedups are lower bounds. '
+            'These are wall-clock results, not N &times; mean-steps work ratios.</p>'
+            '<table>' + "".join(rows) + '</table>'
+        )
+
     data = load_json(OUT / "tcad_table_time" / "case1_eps04_wallclock.json")
     if data is None:
         return '<h2>Table tab:time</h2><p><em>missing case1_eps04_wallclock.json</em></p>'

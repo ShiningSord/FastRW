@@ -4,7 +4,37 @@
 
 基于 Feynman-Kac 公式的 GPU 随机游走求解器，用于带混合边界条件的
 稳态热问题，并提供 **FastRW / FasterRW** 算法的复现实验框架
-（Apple Metal + C++17）。
+（Windows NVIDIA CUDA、Apple Metal + C++17）。
+
+## Windows + NVIDIA CUDA 快速开始
+
+完整的新机器环境安装、正式实验和结果核对步骤请参见
+[windows.zh.md](windows.zh.md)。
+
+Windows CUDA 后端需要 NVIDIA GPU、CUDA Toolkit，以及安装了“使用 C++ 的桌面开发”
+工作负载的 Visual Studio 2019/2022 Build Tools。RTX 3050 Ti 可使用 CUDA 11.3 和
+计算能力 8.6。请在 PowerShell 中运行：
+
+```powershell
+# 首次运行：在 E 盘创建名为 FastRW 的独立环境。
+conda env create --prefix E:\FastRW -f environment-windows.yml
+conda activate E:\FastRW
+
+# 解压随仓库提供的数据，并进行两条路径的 CUDA 冒烟测试。
+.\scripts\fetch_artifacts.ps1
+.\scripts\build_and_run_cuda.ps1 `
+  .\configs\tcad_table1\fastrw_case1.json 2 256
+
+# Phase 1 正式运行（FastRW 每点 8192 条路径，PIRW 每点 4096 条路径）。
+.\scripts\run_fastrw_direct.ps1 1
+.\scripts\run_pirw_direct.ps1 1
+```
+
+`build_and_run_cuda.ps1` 会自动导入 Visual Studio 编译环境、用 CMake/NMake
+构建 `random_walker_cuda.exe` 并运行。CUDA 后端保持与 Metal 后端相同的 CSV、
+constraints JSON、diagnostics JSON、日志和 summary 输出格式。第四个程序参数是
+CUDA 每个 block 的线程数，传入 `-1` 时默认使用 256。修改参考 Metal kernel 后，
+运行 `python scripts/generate_cuda_port.py` 可同步重新生成 CUDA 实现。
 
 <p>
   <img src="docs/figures/bootstrap_case1.png" width="32%">

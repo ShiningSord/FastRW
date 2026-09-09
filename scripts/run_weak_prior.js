@@ -58,7 +58,7 @@ function loadJson(p) {
 }
 
 function bootstrap(postScript, runDir, config, N, outPath) {
-  runShell("node", [
+  runShell(process.execPath, [
     postScript,
     runDir,
     config,
@@ -71,7 +71,7 @@ function bootstrap(postScript, runDir, config, N, outPath) {
 }
 
 function bootstrapPirw(postScript, runDir, N, outPath) {
-  runShell("node", [
+  runShell(process.execPath, [
     postScript,
     runDir,
     `--N=${N}`,

@@ -2,7 +2,40 @@
 
 Feynman-Kac-based GPU random-walk solver and experiment harness for
 steady-state thermal problems with mixed boundary conditions, featuring
-the **FastRW / FasterRW** algorithms (Apple Metal + C++17).
+the **FastRW / FasterRW** algorithms (NVIDIA CUDA on Windows, Apple Metal,
+and portable C++17).
+
+## Windows + NVIDIA CUDA quick start
+
+For a complete clean-machine setup and reproduction walkthrough, see
+[windows.md](windows.md).
+
+The Windows backend requires an NVIDIA GPU, the CUDA Toolkit, and Visual
+Studio 2019/2022 Build Tools with the **Desktop development with C++**
+workload. CUDA 11.3 and compute capability 8.6 are suitable for an RTX 3050
+Ti. From PowerShell:
+
+```powershell
+# Create the environment at E:\FastRW (only needed once).
+conda env create --prefix E:\FastRW -f environment-windows.yml
+conda activate E:\FastRW
+
+# Extract the bundled data and run a small CUDA smoke test.
+.\scripts\fetch_artifacts.ps1
+.\scripts\build_and_run_cuda.ps1 `
+  .\configs\tcad_table1\fastrw_case1.json 2 256
+
+# Full Phase-1 CUDA runs (8192 FastRW or 4096 PIRW paths per point).
+.\scripts\run_fastrw_direct.ps1 1
+.\scripts\run_pirw_direct.ps1 1
+```
+
+`build_and_run_cuda.ps1` automatically imports the Visual Studio compiler
+environment, configures CMake/NMake, builds `random_walker_cuda.exe`, runs it,
+and writes the same CSV, constraints JSON, diagnostics JSON, log, and summary
+formats as the Metal backend. The fourth executable argument is CUDA threads
+per block (`-1` selects 256). To regenerate the CUDA translation after editing
+the reference Metal kernel, run `python scripts/generate_cuda_port.py`.
 
 [中文 README](README.zh.md)
 

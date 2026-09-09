@@ -1,6 +1,7 @@
 # Build artifacts
 build/
 build-metal/
+build-cuda/
 
 # Generated data and outputs (populated by fetch_artifacts.sh and reproduce.sh)
 data/
