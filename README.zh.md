@@ -352,3 +352,13 @@ MIT —— 详见 [LICENSE](LICENSE)。
   year = {2026}
 }
 ```
+
+---
+
+## Windows / NVIDIA CUDA 实验性支持
+
+仓库提供社区贡献的 CUDA 后端，**Windows 版本尚未经项目维护者严格测试，仅供参考**。
+其数值精度、稳定性及不同 Windows/CUDA 环境下的兼容性尚未充分验证，不属于本项目
+已验证的论文复现结果。CMake 默认不启用 CUDA；试用方法见
+[Windows 安装与启动指南](windows.zh.md)。实验输出单独保存在各配置输出目录的
+`cuda-experimental/` 子目录中。

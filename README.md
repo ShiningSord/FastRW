@@ -365,3 +365,15 @@ If you use or cite this repository, please cite the FastRW paper:
   year = {2026}
 }
 ```
+
+---
+
+## Experimental Windows / NVIDIA CUDA support
+
+A community-contributed CUDA backend is available for reference. **The Windows
+version has not been rigorously tested by the project maintainers.** Numerical
+accuracy, stability, and compatibility across Windows/CUDA environments are not
+established; this backend is not part of the validated paper reproduction results.
+CUDA is disabled by default in CMake. See [the Windows setup and launch guide](windows.md)
+to try it. Experimental outputs are stored in a separate `cuda-experimental/`
+subdirectory of each configured output directory.
